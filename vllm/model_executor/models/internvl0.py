@@ -316,10 +316,6 @@ class InternVLInputPipeline:
         max_dynamic_patch: Optional[int] = None,
         dynamic_image_size: Optional[bool] = None,
     ) -> DecoderOnlyInputs:
-        # xj
-        import time
-        start_time = time.time()
-
         multi_modal_data = inputs.get("multi_modal_data")
         if multi_modal_data is None or "image" not in multi_modal_data:
             return inputs
@@ -379,8 +375,6 @@ class InternVLInputPipeline:
                 token_idx += curr_image_featue_size
             else:
                 token_idx += 1
-        # xj
-        print("preprocess 耗时:", time.time() - start_time)
 
         return token_inputs(
             prompt=prompt,
@@ -739,13 +733,7 @@ class InternVLChatModel(nn.Module, SupportsMultiModal, SupportsPP):
         # NOTE: In v1, inputs_embeds is always generated at model runner, this
         # condition is for v0 compatibility.
         elif inputs_embeds is None:
-            # xj
-            import time
-            start_time = time.time()
             vision_embeddings = self.get_multimodal_embeddings(**kwargs)
-            # xj
-            print("vit 耗时:", time.time() - start_time)
-
             inputs_embeds = self.get_input_embeddings(input_ids,
                                                       vision_embeddings)
             input_ids = None
